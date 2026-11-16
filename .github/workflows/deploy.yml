@@ -1,0 +1,29 @@
+name: Node.js CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Get the repository code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Connect to remote server using SSH
+      - name: Deploy Via SSH
+        uses: appleboy/ssh-action@v1.0.3
+
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+
+          script: |
+            cd /root/nodejs-application-deploy-github-actions
+            git pull origin main
+            docker compose up -d --build
